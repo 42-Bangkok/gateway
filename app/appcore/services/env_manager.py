@@ -13,9 +13,11 @@
     CELERY_BROKER_URL: Celery broker URL
     CELERY_RESULT_BACKEND: Celery result backend
 
+    IF DEPLOYENV == "build": the environment variables will checked for errors
+
     Usage:
         from appcore.services.env_manager import ENVS
-        ENVS["SECRET_KEY"]
+        ENVS.get("SECRET_KEY")
 """
 import os
 from typing import Any
@@ -66,18 +68,19 @@ def convert_env(env: str, value: str) -> Any:
         case "DEPLOYENV":
             if value not in ["dev", "prod"]:
                 raise ValueError(
-                    f'Invalid value for {env}: {value} (must be "dev" or "prod")'
+                    f'Invalid value for {env}: {value} (must be of "dev", "prod")'
                 )
             return value
         case _:
             return value
 
 
-for env in ENV_NAMES:
-    try:
-        ENVS[env] = convert_env(env, os.environ[env])
-    except KeyError as e:
-        errs.append(str(e).strip("'"))
+if not os.environ.get("DEPLOYENV") == "build":
+    for env in ENV_NAMES:
+        try:
+            ENVS[env] = convert_env(env, os.environ[env])
+        except KeyError as e:
+            errs.append(str(e).strip("'"))
 
-if errs:
-    raise EnvironmentError(f'Envs not found: {", ".join(errs)}')
+    if errs:
+        raise EnvironmentError(f'Envs not found: {", ".join(errs)}')

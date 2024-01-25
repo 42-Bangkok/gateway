@@ -22,14 +22,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ENVS["SECRET_KEY"]
+SECRET_KEY = ENVS.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = ENVS["DEBUG"]
+DEBUG = ENVS.get("DEBUG")
 
 
-ALLOWED_HOSTS = ENVS["ALLOWED_HOSTS"]
-CORS_ALLOWED_ORIGINS = ENVS["CORS_ALLOWED_ORIGINS"]  # remove if cors set in nginx
+ALLOWED_HOSTS = ENVS.get("ALLOWED_HOSTS", [])
+CORS_ALLOWED_ORIGINS = ENVS.get(
+    "CORS_ALLOWED_ORIGINS", []
+)  # remove if cors set in nginx
 
 # Application definition
 
@@ -87,11 +89,11 @@ WSGI_APPLICATION = "app.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "HOST": ENVS["DB_HOST"],
-        "NAME": ENVS["DB_NAME"],
-        "USER": ENVS["DB_USER"],
-        "PASSWORD": ENVS["DB_PASS"],
-        "PORT": ENVS["DB_PORT"],
+        "HOST": ENVS.get("DB_HOST"),
+        "NAME": ENVS.get("DB_NAME"),
+        "USER": ENVS.get("DB_USER"),
+        "PASSWORD": ENVS.get("DB_PASS"),
+        "PORT": ENVS.get("DB_PORT"),
     }
 }
 
@@ -140,21 +142,21 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # S3
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-AWS_ACCESS_KEY_ID = ENVS["AWS_ACCESS_KEY_ID"]
-AWS_SECRET_ACCESS_KEY = ENVS["AWS_SECRET_ACCESS_KEY"]
-AWS_STORAGE_BUCKET_NAME = ENVS["AWS_STORAGE_BUCKET_NAME"]
-AWS_S3_ENDPOINT_URL = ENVS["AWS_S3_ENDPOINT_URL"]
+AWS_ACCESS_KEY_ID = ENVS.get("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = ENVS.get("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = ENVS.get("AWS_STORAGE_BUCKET_NAME")
+AWS_S3_ENDPOINT_URL = ENVS.get("AWS_S3_ENDPOINT_URL")
 
 # Celery Task Scheduler
-CELERY_BROKER_URL = ENVS["CELERY_BROKER_URL"]
-CELERY_RESULT_BACKEND = ENVS["CELERY_RESULT_BACKEND"]
+CELERY_BROKER_URL = ENVS.get("CELERY_BROKER_URL")
+CELERY_RESULT_BACKEND = ENVS.get("CELERY_RESULT_BACKEND")
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
 # Enables Redis Cache
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": ENVS["REDIS_CACHE_URL"],
+        "LOCATION": ENVS.get("REDIS_CACHE_URL"),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },
