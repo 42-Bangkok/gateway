@@ -2,7 +2,7 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-ARG DEPLOYENV
+ARG DEPLOYENV=build
 
 COPY requirements.txt .
 RUN pip install -r requirements.txt --no-cache-dir
