@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     # Own
     "appcore",
     "appaccount",
-    "appstore",
 ]
 
 MIDDLEWARE = [
