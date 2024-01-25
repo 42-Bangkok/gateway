@@ -34,3 +34,8 @@ run-worker:
 run-beat:
 	cd app &&\
 	poetry run celery -A app beat -l INFO
+release:
+	ver=$(shell date +%Y.%m.%d.%s) &&\
+	echo $$ver &&\
+	git tag -a $$ver -m "Release $$ver" &&\
+	git push origin $$ver
