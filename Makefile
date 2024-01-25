@@ -34,6 +34,7 @@ run-worker:
 run-beat:
 	cd app &&\
 	poetry run celery -A app beat -l INFO
+# Tag & trigger github actions to build and push docker image
 release:
 	ver=$(shell date +%Y.%m.%d.%s) &&\
 	echo $$ver &&\
