@@ -9,6 +9,7 @@ class BaseUUID(models.Model):
     """
     Used for models that need a UUID as a primary key.
     """
+
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
 
     class Meta:
@@ -19,6 +20,7 @@ class BaseAutoDate(models.Model):
     """
     Used for models that need a created and updated date.
     """
+
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 

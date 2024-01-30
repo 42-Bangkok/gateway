@@ -24,7 +24,7 @@ class PageNumberPaginationExt(PageNumberPagination):
     ) -> Any:
         offset = (pagination.page - 1) * self.page_size
         ret = {
-            "items": queryset[offset: offset + self.page_size],
+            "items": queryset[offset : offset + self.page_size],
             "count": self._items_count(queryset),
             "total_page": math.ceil(self._items_count(queryset) / self.page_size),
         }

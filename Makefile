@@ -5,7 +5,7 @@ default:
 	@echo "Please specify a target to make."
 # Export python requirements to requirements.txt
 req:
-	pip install poetry-plugin-export
+	poetry add poetry-plugin-export -G dev
 	poetry export -f requirements.txt --output requirements.txt --without-hashes
 # Migrate database
 m:

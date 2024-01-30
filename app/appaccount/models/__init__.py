@@ -1,2 +1,2 @@
-from .accounts import *
-from .auths import *
+from .accounts import *  # noqa
+from .auths import *  # noqa

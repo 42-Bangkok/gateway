@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     # Own
     "appcore",
     "appaccount",
+    "apptasks",
 ]
 
 MIDDLEWARE = [

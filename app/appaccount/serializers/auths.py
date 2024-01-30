@@ -5,8 +5,8 @@ from pydantic import EmailStr
 
 class LoginPostIn(Schema):
     uid: str
-    provider: Literal['42']
-    email: EmailStr | None = Field(None, description='Email of the user')
+    provider: Literal["42"]
+    email: EmailStr | None = Field(None, description="Email of the user")
 
 
 class LoginPostOut(Schema):

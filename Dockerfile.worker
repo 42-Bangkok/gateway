@@ -12,4 +12,4 @@ RUN python manage.py collectstatic --noinput
 
 EXPOSE 8000
 
-ENTRYPOINT ["sh", "./start.sh"]
+ENTRYPOINT ["run celery -A app worker -l INFO -E"]

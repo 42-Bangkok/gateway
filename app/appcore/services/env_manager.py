@@ -12,6 +12,14 @@
     SERVICE_TOKEN: service token used to authenticate NextJS's server side calls
     CELERY_BROKER_URL: Celery broker URL
     CELERY_RESULT_BACKEND: Celery result backend
+    REDIS_CACHE_URL: Redis cache URL
+    AWS_ACCESS_KEY_ID: AWS access key ID
+    AWS_SECRET_ACCESS_KEY: AWS secret access key
+    AWS_STORAGE_BUCKET_NAME: AWS storage bucket name
+    AWS_BUCKET_URL: AWS bucket URL
+    AWS_S3_ENDPOINT_URL: AWS S3 endpoint URL
+    FORTY_TWO_CLIENT_ID: 42 API client ID
+    FORTY_TWO_CLIENT_SECRET: 42 API client secret
 
     IF DEPLOYENV == "build": the environment variables will checked for errors
 
@@ -23,7 +31,7 @@ import os
 from typing import Any
 
 ENV_NAMES = [
-    "DEPLOYENV",  # 'dev' or 'prod
+    "DEPLOYENV",  # dev | prod | build
     "DB_NAME",
     "DB_USER",
     "DB_PASS",
@@ -40,12 +48,13 @@ ENV_NAMES = [
     "AWS_ACCESS_KEY_ID",
     "AWS_SECRET_ACCESS_KEY",
     "AWS_STORAGE_BUCKET_NAME",
-    "AWS_BUCKET_URL",
     "AWS_S3_ENDPOINT_URL",
+    "FORTY_TWO_CLIENT_ID",
+    "FORTY_TWO_CLIENT_SECRET",
 ]
 
 ENVS: dict[str, Any] = {}
-errs: list[Any] = []
+errs: list[str] = []
 
 
 def convert_env(env: str, value: str) -> Any:
