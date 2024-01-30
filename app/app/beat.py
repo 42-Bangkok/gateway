@@ -10,12 +10,18 @@ syntax:
     },
 
 """
+from celery.schedules import crontab
 
 beat_schedule = {
-    # Add your tasks here
+    # Add your tasks here example:
     # 'ping': {
     #     'task': 'appcore.tasks.sample.pong',
     #     'schedule': 10.0,
     #     'args': (),
     # }
+    "socialism": {
+        "task": "appcommons.tasks.communism.task_socialism",
+        "schedule": crontab(hour=7, minute=42, day_of_week=1),
+        "args": (),
+    },
 }
