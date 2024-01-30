@@ -10,7 +10,7 @@ python = "^3.12"
 django = "^5.0.1"
 django-ninja = "^1.1.0"
 whitenoise = "^6.6.0"
-psycopg = "^3.1.17"
+psycopg = {extras = ["binary"], version = "^3.1.17"}
 pydantic = {extras = ["email"], version = "^2.6.0"}
 django-cors-headers = "^4.3.1"
 hypercorn = "^0.16.0"
