@@ -1,13 +1,13 @@
 from datetime import datetime
 
 import httpx
-from appcore.services.intra.api import Intra
+from appcore.services.intra.intra import Intra
 from dateutil.parser import parse as datetime_parse
 from django.utils import timezone
 from pydantic import validate_call
 
 
-class User(Intra):
+class IntraUser(Intra):
     """
     Represents a user from the 42 API.
     """
