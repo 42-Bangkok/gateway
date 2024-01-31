@@ -2,6 +2,7 @@
 This module contains the base models for all models in the app.
 """
 import uuid
+
 from django.db import models
 
 
