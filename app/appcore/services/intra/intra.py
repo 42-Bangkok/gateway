@@ -1,7 +1,12 @@
+import threading
+from time import sleep
+from urllib.parse import urlencode
 import httpx
 from appcore.services.env_manager import ENVS
 from django.core.cache import cache
 from pydantic import validate_call
+from appcore.services.console import console
+from rich.progress import track
 
 
 class Intra:
@@ -202,3 +207,78 @@ class Intra:
             r.raise_for_status()
 
         return r.json()
+
+    def get_users_by_cursus_id(self, cursus_id: int, filter: dict) -> list:
+        """
+        {{BASE_API}}/cursus/:cursus_id/users?filter[primary_campus_id]=33&filter[pool_month]=january&filter[pool_year]=2022&[page[size]=100
+        https://api.intra.42.fr/apidoc/2.0/users/index.html
+        C-Piscine's cursus_id is 9
+        ex.
+        filter = {
+            'filter[primary_campus_id]': 33,
+            'filter[pool_month]': 'january',
+            'filter[pool_year]': 2022,
+        }
+        """
+        ENDPOINT = "cursus"
+        params = urlencode(filter)
+
+        def _get_users_at_page(pagenum):
+            url = f"{self.BASE}/{ENDPOINT}/{cursus_id}/users/?{params}&page[number]={pagenum}&page[size]=100"
+            console.log(f"Getting {url}")
+            headers = {"Authorization": f"Bearer {self.access_token}"}
+            r = httpx.get(url, headers=headers)
+            return r.json()
+
+        l_users = []
+        pagenum = 1
+        while r := _get_users_at_page(pagenum):
+            l_users += r
+            pagenum += 1
+
+        return l_users
+
+    def get_user_info(self, id) -> dict:
+        """
+        Get user info by id
+        """
+        ENDPOINT = "users"
+
+        with httpx.Client() as client:
+            url = f"{self.BASE}/{ENDPOINT}/{id}"
+            headers = {"Authorization": f"Bearer {self.access_token}"}
+            r = client.get(url, headers=headers)
+            tries = 10
+            while r.status_code != 200 and tries > 0:
+                console.log(f"Getting user {id=} Failed! Retrying {tries=}")
+                r = client.get(url, headers=headers)
+                tries -= 1
+                sleep(1)
+            if r.status_code != 200:
+                raise Exception(f"Failed to get user {id=}")
+
+        return r.json()
+
+    def get_user_infos_thr(self, l_ids, delay=0.5, token=None) -> list:
+        """
+        Get user info by ids using threading to speed up
+        delay more than 0.5 will risk cause 429
+        """
+        user_infos = []
+        thrs = []
+
+        def thr_get_user_info(id):
+            user_infos.append(self.get_user_info(id))
+
+        for id in l_ids:
+            thr = threading.Thread(target=thr_get_user_info, args=(id,))
+            thrs.append(thr)
+
+        for thr in track(thrs, description="Getting user info"):
+            thr.start()
+            sleep(delay)
+
+        for thr in thrs:
+            thr.join()
+
+        return user_infos
