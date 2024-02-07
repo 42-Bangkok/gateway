@@ -18,10 +18,19 @@ class IntraUser(Intra):
     ]
 
     @validate_call
-    def __init__(self, login: str):
+    def __init__(self, login: str, data: dict = None):
+        """
+        Initialize the user.
+        Args:
+            login (str): The login of the user.
+            data (dict, optional): The data of the user. Defaults to None. If not provided, the data will be fetched from the API.
+        """
         super().__init__()
         self.login = login
-        self.data = self.user(login)
+        if data:
+            self.data = data
+        elif data is None:
+            self.data = self.user(login)
         self._disable_methods(self.DISABLED_METHODS)
 
     def _disable_methods(self, methods: list):
