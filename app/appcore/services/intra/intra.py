@@ -16,8 +16,7 @@ class Intra:
 
     BASE = "https://api.intra.42.fr/v2"
 
-    def __init__(self):
-        ...
+    def __init__(self): ...
 
     @property
     def access_token(self) -> str:
@@ -282,3 +281,28 @@ class Intra:
             thr.join()
 
         return user_infos
+
+    def get_projects_by_cursus(self, cursus_id: int) -> list:
+        """
+        Get projects by cursus id.
+        Useful for getting project infos.
+        """
+
+        def _get_projects_at_page(pagenum: int, client: httpx.Client):
+            url = f"{self.BASE}/cursus/{cursus_id}/projects"
+            headers = {"Authorization": f"Bearer {self.access_token}"}
+            params = {
+                "page[number]": pagenum,
+                "page[size]": 100,
+            }
+            r = client.get(url, headers=headers, params=params)
+            return r.json()
+
+        projects = []
+        pagenum = 1
+        with httpx.Client() as client:
+            while r := _get_projects_at_page(pagenum, client):
+                projects += r
+                pagenum += 1
+
+        return projects
