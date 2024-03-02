@@ -16,7 +16,12 @@ class Intra:
 
     BASE = "https://api.intra.42.fr/v2"
 
-    def __init__(self): ...
+    def __init__(self):
+        """
+        Initializes the Intra API.
+        defaults timeout to 30 because, well, you know :*(
+        """
+        self.timeout = 30
 
     @property
     def access_token(self) -> str:
@@ -226,7 +231,8 @@ class Intra:
             url = f"{self.BASE}/{ENDPOINT}/{cursus_id}/users/?{params}&page[number]={pagenum}&page[size]=100"
             console.log(f"Getting {url}")
             headers = {"Authorization": f"Bearer {self.access_token}"}
-            r = httpx.get(url, headers=headers)
+            r = httpx.get(url, headers=headers, timeout=self.timeout)
+            r.raise_for_status()
             return r.json()
 
         l_users = []
@@ -246,7 +252,7 @@ class Intra:
         with httpx.Client() as client:
             url = f"{self.BASE}/{ENDPOINT}/{id}"
             headers = {"Authorization": f"Bearer {self.access_token}"}
-            r = client.get(url, headers=headers)
+            r = client.get(url, headers=headers, timeout=self.timeout)
             tries = 10
             while r.status_code != 200 and tries > 0:
                 console.log(f"Getting user {id=} Failed! Retrying {tries=}")
