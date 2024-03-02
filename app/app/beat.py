@@ -21,12 +21,12 @@ beat_schedule = {
     #     'args': (),
     # }
     "socialism": {
-        "task": "appcommons.tasks.communism.task_socialism",
+        "task": "apptasks.tasks.communism.task_socialism",
         "schedule": crontab(hour=7, minute=42, day_of_week=1),
         "args": (),
     },
     "update_intra_profile": {
-        "task": "appcommons.tasks.intra.task_update_intra_profile",
+        "task": "apptasks.tasks.intra.task_update_intra_profile",
         "schedule": crontab(minute=0, hour=10),
         "args": (),
     },
