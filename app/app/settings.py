@@ -33,7 +33,7 @@ CORS_ALLOWED_ORIGINS = ENVS.get(
     "CORS_ALLOWED_ORIGINS", []
 )  # remove if cors set in nginx
 CSRF_TRUSTED_ORIGINS = ENVS.get("CSRF_TRUSTED_ORIGINS", [])
-USE_X_FORWARDED_HOST = True  # we're behind a cloudflard
+USE_X_FORWARDED_HOST = True  # we're behind a cloudflare tunnel
 # Application definition
 
 INSTALLED_APPS = [
