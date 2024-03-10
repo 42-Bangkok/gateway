@@ -27,6 +27,6 @@ api.add_router("/account", account_router)
 api.add_router("/data", data_router)
 
 urlpatterns = [
-    path("", api.urls),
+    path("api/", api.urls),
     path("admin/", admin.site.urls),
 ]
