@@ -27,6 +27,7 @@
         from appcore.services.env_manager import ENVS
         ENVS.get("SECRET_KEY")
 """
+
 import os
 from typing import Any
 
@@ -40,6 +41,7 @@ ENV_NAMES = [
     "DEBUG",
     "ALLOWED_HOSTS",
     "CORS_ALLOWED_ORIGINS",
+    "CSRF_TRUSTED_ORIGINS",
     "SECRET_KEY",
     "SERVICE_TOKEN",
     "CELERY_BROKER_URL",
@@ -73,6 +75,8 @@ def convert_env(env: str, value: str) -> Any:
         case "ALLOWED_HOSTS":
             return [i for i in value.split(",") if i != ""]
         case "CORS_ALLOWED_ORIGINS":
+            return [i for i in value.split(",") if i != ""]
+        case "CSRF_TRUSTED_ORIGINS":
             return [i for i in value.split(",") if i != ""]
         case "DEPLOYENV":
             if value not in ["dev", "prod"]:

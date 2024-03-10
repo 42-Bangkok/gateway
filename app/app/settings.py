@@ -32,7 +32,7 @@ ALLOWED_HOSTS = ENVS.get("ALLOWED_HOSTS", [])
 CORS_ALLOWED_ORIGINS = ENVS.get(
     "CORS_ALLOWED_ORIGINS", []
 )  # remove if cors set in nginx
-
+CSRF_TRUSTED_ORIGINS = ENVS.get("CSRF_TRUSTED_ORIGINS", [])
 # Application definition
 
 INSTALLED_APPS = [
