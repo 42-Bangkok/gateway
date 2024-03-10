@@ -33,7 +33,6 @@ def update_intraprofile() -> bool:
         else:
             logins += [i["login"] for i in users]
     logins = list(set(logins))
-    logins = logins[:10]
     console.log(f"Logins to fetch: {len(logins)}")
     user_infos = intra.get_user_infos_thr(logins)
     hist_intra_profile_data_s = []
