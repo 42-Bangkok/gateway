@@ -1,6 +1,7 @@
 """
 Eval Pts Socialism manual script
 """
+
 import pandas as pd
 from appcore.services.console import console
 from appcore.services.intra.intra import Intra
@@ -60,7 +61,7 @@ def socialism(target=10, dry_run=False):
     users = api.cursus_users(cursus_id=21, filter_params=filter_params)
     df_users = pd.DataFrame(users)
     df_users = df_users[
-        (df_users["correction_point"] > target) & (df_users["staff?"] is False)
+        (df_users["correction_point"] > target) & (df_users["staff?"] == False)
     ]
     df_users.sort_values(by="correction_point", ascending=False, inplace=True)
     logins = df_users["login"].tolist()
