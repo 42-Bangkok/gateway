@@ -30,10 +30,14 @@ hypercorn:
 run-worker:
 	cd app &&\
 	poetry run celery -A app worker -l INFO -E
-# Run celery scheduler
+# Run celery scheduler; deprecated
 run-beat:
 	cd app &&\
 	poetry run celery -A app beat -l INFO
+# Run celery worker with database scheduler
+run-db-beat:
+	cd app &&\
+	celery -A app beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
 # Tag & trigger github actions to build and push docker image
 release:
 	ver=$(shell date +%Y.%m.%d.%s) &&\
