@@ -8,6 +8,7 @@ class DiscordWebhook(BaseAutoDate, BaseUUID):
     """
 
     name = models.CharField(unique=True)
+    description = models.TextField(default="")
     url = models.URLField()
 
     def __str__(self):
