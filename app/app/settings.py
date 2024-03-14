@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     # Third party apps
     "ninja",
     "corsheaders",
+    "django_celery_beat",
     # Own
     "appcore",
     "appaccount",
