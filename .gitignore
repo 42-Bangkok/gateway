@@ -209,3 +209,4 @@ pyrightconfig.json
 # End of https://www.toptal.com/developers/gitignore/api/python,macos
 app/celerybeat-schedule
 note.md
+app/staticfiles
