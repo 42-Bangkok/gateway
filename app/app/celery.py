@@ -37,5 +37,6 @@ app.autodiscover_tasks(
         # add tasks module here
         "apptasks.tasks.socialisms",
         "apptasks.tasks.update_intra_profile",
+        "apptasks.tasks.discord",
     ]
 )
