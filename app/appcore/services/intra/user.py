@@ -1,10 +1,15 @@
 from datetime import datetime
+import logging
+from time import sleep
 
+import dateutil
 import httpx
+import pytz
 from appcore.services.intra.intra import Intra
 from dateutil.parser import parse as datetime_parse
 from django.utils import timezone
 from pydantic import validate_call
+import pandas as pd
 
 
 class IntraUser(Intra):
@@ -24,6 +29,9 @@ class IntraUser(Intra):
         Args:
             login (str): The login of the user.
             data (dict, optional): The data of the user. Defaults to None. If not provided, the data will be fetched from the API.
+            pts_gain (int, optional): The evalation points gained by the user calculated by calling calc_eval_pts_gainloss. Defaults to None.
+            pts_lost (int, optional): The evalation points lost by the user calculated by calling calc_eval_pts_gainloss. Defaults to None.
+
         """
         super().__init__()
         self.login = login
@@ -32,6 +40,9 @@ class IntraUser(Intra):
         elif data is None:
             self.data = self.user(login)
         self._disable_methods(self.DISABLED_METHODS)
+
+        self.pts_gain: int | None = None
+        self.pts_lost: int | None = None
 
     def _disable_methods(self, methods: list):
         """
@@ -62,6 +73,70 @@ class IntraUser(Intra):
             int: The correction point of the user.
         """
         return self.data["correction_point"]
+
+    def level(self, cursus_id: int) -> int:
+        """
+        Return the level of the user in the given cursus. 0 if not in the cursus.
+        :param cursus_id: The cursus id.
+        :return: The level of the user in the given cursus.
+        """
+        for cu in self.data["cursus_users"]:
+            if cu["cursus_id"] == cursus_id:
+                return cu["level"]
+
+        return 0
+
+    def project_users(self, cursus_id: int) -> list:
+        """
+        Return the project users of the user in the given cursus. [] if not in the cursus.
+        :param cursus_id: The cursus id.
+        :return: The project users of the user in the given cursus.
+        """
+        ret = []
+        for pu in self.data["projects_users"]:
+            if cursus_id in pu["cursus_ids"]:
+                ret.append(pu)
+
+        return ret
+
+    def calc_total_tries(self, cursus_id):
+        """
+        Returns total number of tries by user in given cursus_id
+        """
+        project_users = self.project_users(cursus_id)
+
+        if len(project_users) == 0:
+            return 0
+
+        df = pd.DataFrame(project_users)
+        df["tries"] = df["occurrence"] + 1
+
+        return df["tries"].sum()
+
+    def project_final_mark(self, cursus_id: int, project_slug: str) -> int | None:
+        """
+        Return the final mark of the user in the given project. None if not in the project.
+        :param project_slug: The project slug.
+        :param cursus_id: The cursus id.
+        :return: The final mark of the user in the given project.
+        """
+        for project in self.project_users(cursus_id):
+            if project["project"]["slug"] == project_slug:
+                return project["final_mark"]
+
+        return None
+
+    def project(self, cursus_id: int, project_slug: str) -> dict:
+        """
+        Return the project of the user in the given cursus. {} if not in the cursus.
+        :param cursus_id: The cursus id.
+        :return: The project of the user in the given cursus.
+        """
+        for project in self.project_users(cursus_id):
+            if project["project"]["slug"] == project_slug:
+                return project
+
+        return {}
 
     @validate_call
     def set_correction_point(
@@ -193,6 +268,84 @@ class IntraUser(Intra):
         r.raise_for_status()
 
         return True
+
+    def get_correction_point_hist(self) -> list:
+        """
+        /users/:user_id/correction_point_historics?filter[reason]=&page[size]=100&page[number]=1
+        Returns:
+            list: A list of correction point history.
+        """
+
+        def _get_at_page(pagenum):
+            url = f"{self.BASE}/users/{self.login}/correction_point_historics?page[number]={pagenum}&page[size]=100"
+            headers = {"Authorization": f"Bearer {self.access_token}"}
+            r = httpx.get(url, headers=headers)
+            tries = 10
+            while r.status_code != 200:
+                if tries == 0:
+                    raise Exception(
+                        f"Failed to get correction point history for {self.login=}"
+                    )
+                logging.info(
+                    f"get_correction_point_hist {self.login=} Failed! Retrying {tries=}"
+                )
+                r = httpx.get(url, headers=headers)
+                tries -= 1
+                sleep(1)
+            return r.json()
+
+        l_eval_hists = []
+        pagenum = 1
+        while r := _get_at_page(pagenum):
+            l_eval_hists += r
+            pagenum += 1
+
+        return l_eval_hists
+
+    def calc_eval_pts_gainloss(self) -> tuple[int, int]:
+        """
+        Returns total sum of current points gained/ loss by evaluation
+        Sets self.pts_gain and self.pts_lost
+        Returns:
+            tuple[int, int]: The total points gained and lost by evaluation.
+        """
+        l_eval_hists = self.get_correction_point_hist()
+        df_eval_hist = pd.DataFrame(l_eval_hists)
+        self.pts_lost = abs(
+            df_eval_hist[df_eval_hist["reason"] == "Defense plannification"][
+                "sum"
+            ].sum()
+        )
+        self.pts_gain = df_eval_hist[df_eval_hist["reason"] == "Earning after defense"][
+            "sum"
+        ].sum()
+
+        return self.pts_gain, self.pts_lost
+
+    def get_last_active_date_by_project_update(self, cursus_id):
+        """
+        Return the last active date of the user in the given cursus. '1970-01-01T00:00:00Z' if KeyErro
+        :param cursus_id: The cursus id.
+        :return: The last active date of the user in the given cursus.
+        """
+        try:
+            df = pd.DataFrame(self.project_users(cursus_id=cursus_id))
+            dt = df["updated_at"].apply(dateutil.parser.parse).max()
+            return dt
+        except KeyError:
+            return dateutil.parser.parse("1970-01-01T00:00:00Z")
+
+    def get_days_since_last_active_date_by_project_update(self, cursus_id):
+        """
+        Return the days since the last active date of the user in the given cursus. Returns very big number if ERRORs.
+        :param cursus_id: The cursus id.
+        :return: The days since the last active date of the user in the given cursus.
+        """
+        delta = datetime.now(pytz.UTC) - self.get_last_active_date_by_project_update(
+            cursus_id=cursus_id
+        )
+
+        return delta.days
 
     def __repr__(self):
         return f"<User {self.login}>"
