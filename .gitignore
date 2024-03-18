@@ -210,3 +210,4 @@ pyrightconfig.json
 app/celerybeat-schedule
 note.md
 app/staticfiles
+app/service_account.json

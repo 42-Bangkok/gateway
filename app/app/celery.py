@@ -38,5 +38,6 @@ app.autodiscover_tasks(
         "apptasks.tasks.socialisms",
         "apptasks.tasks.update_intra_profile",
         "apptasks.tasks.discord",
+        "apptasks.tasks.snappy",
     ]
 )
