@@ -20,4 +20,4 @@ class ServiceBearerTokenAuth(HttpBearer):
         if token == ENVS["SERVICE_TOKEN"]:
             return True
 
-        return None
+        return False
