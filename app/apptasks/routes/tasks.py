@@ -1,11 +1,13 @@
 import json
 from ninja import Router
-from django_celery_beat.models import PeriodicTask
+from django_celery_beat.models import PeriodicTask, CrontabSchedule
 
-from apptasks.serializers.snappy import (
+
+from appcore.serializers.commons import ErrorResponse
+from apptasks.serializers.tasks import (
+    CreateSnappyTaskPostIn,
+    SnappyTaskPatchIn,
     TaskGetOut,
-    TaskPatchIn,
-    TaskPatchOut,
     TasksGetOut,
 )
 
@@ -30,9 +32,62 @@ def get_tasks(request, name_contains: str = None):
     return {"items": tasks}
 
 
+@router.post(
+    "/snappy/",
+    response={200: None},
+)
+def post_snappy_task(request, payload: CreateSnappyTaskPostIn):
+    """
+    Create a new snappy task
+    """
+
+    schedule, _ = CrontabSchedule.objects.get_or_create(
+        **payload.cron_schedule.model_dump()
+    )
+    PeriodicTask.objects.create(
+        crontab=schedule,
+        name=payload.name,
+        task="apptasks.tasks.snappy.snap_to_gsheet",
+        kwargs=json.dumps(payload.kwargs.model_dump()),
+    )
+    return 200, None
+
+
+@router.patch(
+    "/snappy/{id}/",
+    response={
+        200: None,
+        400: ErrorResponse,
+        404: None,
+    },
+)
+def patch_snappy_task(request, id: int, payload: SnappyTaskPatchIn):
+    """
+    Patch a snappy task
+    """
+    task = PeriodicTask.objects.filter(id=id).first()
+    if task is None:
+        return 404, None
+    if not task.name.startswith("snappy."):
+        return 400, {"code": "not_snappy_task", "detail": "Not a snappy task."}
+    for key, value in payload.model_dump(exclude_unset=True).items():
+        match key:
+            case "kwargs":
+                setattr(task, key, json.dumps(value))
+            case "cron_schedule":
+                schedule, _ = CrontabSchedule.objects.get_or_create(
+                    **value.model_dump()
+                )
+                setattr(task, "crontab", schedule)
+            case _:
+                setattr(task, key, value)
+    task.save()
+    return None
+
+
 @router.get(
     "/{id}/",
-    response={200: TaskGetOut},
+    response={200: TaskGetOut, 404: None},
 )
 def get_task(request, id: int):
     """
@@ -41,34 +96,8 @@ def get_task(request, id: int):
     - id: int - Task ID
     """
 
-    task = PeriodicTask.objects.get(id=id)
-
-    return task
-
-
-@router.patch(
-    "/{id}/",
-    response={200: TaskPatchOut, 404: None},
-)
-def patch_task(request, payload: TaskPatchIn, id: int):
-    """
-    Patch a task
-    Path Parameters:
-    - id: int - Task ID
-    Payload:
-    - enabled: bool (optional) - Task enabled status
-    - kwargs: dict (optional) - Task kwargs
-    """
-
     task = PeriodicTask.objects.filter(id=id).first()
     if task is None:
         return 404, None
-    for key, value in payload.model_dump(exclude_unset=True).items():
-        match key:
-            case "kwargs":
-                setattr(task, key, json.dumps(value))
-            case _:
-                setattr(task, key, value)
-    task.save()
 
     return task
