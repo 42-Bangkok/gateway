@@ -166,7 +166,7 @@ class IntraUser(Intra):
         params = {"reason": reason, "amount": diff}
         url = f"{self.BASE}/users/{self.login}/correction_points/add"
         with httpx.Client() as client:
-            r = client.post(url, headers=headers, params=params)
+            r = client.post(url, headers=headers, params=params, timeout=self.timeout)
         if r.status_code not in [i for i in range(200, 300)]:
             raise Exception("Could not set correction point")
 
