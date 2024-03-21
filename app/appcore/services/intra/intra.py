@@ -141,7 +141,9 @@ class Intra:
         url = f"{self.BASE}/cursus/{cursus_id}/users/"
         headers = {"Authorization": f"Bearer {self.access_token}"}
         with httpx.Client() as client:
-            r = client.get(url, headers=headers, params=filter_params)
+            r = client.get(
+                url, headers=headers, params=filter_params, timeout=self.timeout
+            )
             r.raise_for_status()
             ret += r.json()
 
@@ -207,7 +209,7 @@ class Intra:
         url = f"{self.BASE}/pools/{pool_id}/points/add"
         data = {"points": value}
         with httpx.Client() as client:
-            r = client.post(url, headers=headers, data=data)
+            r = client.post(url, headers=headers, data=data, timeout=self.timeout)
             r.raise_for_status()
 
         return r.json()
