@@ -16,6 +16,7 @@ def update_intraprofile() -> bool:
     cursus id 21 Main cursus
     cursus id 9 C Piscine
     cursus id 3 Discovery
+    cursus id 69 Python
     """
     CURSUS_IDS = [9, 3, 21, 74, 75, 69]
     FILTER = {
