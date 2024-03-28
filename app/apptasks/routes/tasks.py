@@ -38,7 +38,7 @@ def get_tasks(request, name_contains: str = None):
 )
 def post_snappy_task(request, payload: CreateSnappyTaskPostIn):
     """
-    Create a new snappy task
+    Create a new snappy to gsheet task
     """
 
     schedule, _ = CrontabSchedule.objects.get_or_create(
