@@ -17,7 +17,7 @@ def update_intraprofile() -> bool:
     cursus id 9 C Piscine
     cursus id 3 Discovery
     """
-    CURSUS_IDS = [9, 3, 21, 74, 75]
+    CURSUS_IDS = [9, 3, 21, 74, 75, 69]
     FILTER = {
         "filter[primary_campus_id]": 33,
     }
