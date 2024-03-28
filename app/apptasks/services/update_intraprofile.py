@@ -11,8 +11,13 @@ def update_intraprofile() -> bool:
     Updates the intra profile of all cadets
     Returns:
         True if successful
+    cursus id 75 Pro training - AI
+    cursus id 74 Pro training - Cybersecurity
+    cursus id 21 Main cursus
+    cursus id 9 C Piscine
+    cursus id 3 Discovery
     """
-    CURSUS_IDS = [9, 3, 21]  # 9: C, 3: Discovery, 21: Main
+    CURSUS_IDS = [9, 3, 21, 74, 75]
     FILTER = {
         "filter[primary_campus_id]": 33,
     }
