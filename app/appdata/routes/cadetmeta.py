@@ -41,3 +41,10 @@ def patch_cadetmeta(request, login: str, payload: CadetmetaPatchIn):
         setattr(cadetmeta, key, value)
     cadetmeta.save()
     return cadetmeta
+
+
+@router.get(
+    "latest",
+)
+def get_latest_cadetmeta(request):
+    pass
