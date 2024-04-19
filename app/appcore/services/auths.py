@@ -6,9 +6,9 @@ from appcore.services.env_manager import ENVS
 
 
 class ServiceBearerTokenAuth(HttpBearer):
-    """Used to authenticate NextJS's server side calls"""
+    """Used to authenticate server to server calls"""
 
-    async def authenticate(self, request, token) -> Literal[True] | None:
+    def authenticate(self, request, token) -> Literal[True] | None:
         """This is a function to authenticate using token.
         Args:
             request (Request): request object
