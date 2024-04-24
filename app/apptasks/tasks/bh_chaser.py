@@ -1,8 +1,3 @@
-# flake8: noqa
-"""
-For test fetching all cadet data
-"""
-
 import io
 from celery import shared_task
 import pandas as pd
@@ -34,6 +29,7 @@ def bh_chaser() -> bool:
         .order_by("profile", "-created")
         .distinct("profile")
     )
+
     # get users with bh not None
     bh_data = []
     for profile in qs:
@@ -70,11 +66,9 @@ def bh_chaser() -> bool:
     df_14_30 = df[(df["bh_in"] > 14) & (df["bh_in"] <= 30)]
     df_45 = df[df["bh_in"] <= 45]
 
-    # instantiate webhook and embed
+    # instantiate webhook, and embed
     webhook = DiscordWebhook(url=discord_webhook.url)
-    embed = DiscordEmbed(
-        title="BH report v2 testing", description="Every day", color="03b2f8"
-    )
+    embed = DiscordEmbed(title="BH report v2", description="Every day", color="03b2f8")
     embed.add_embed_field(name="in 14 days", value=f"{len(df_14)}", inline=False)
     embed.add_embed_field(name="in 14-30 days", value=f"{len(df_14_30)}", inline=False)
     embed.add_embed_field(name="in 45 days", value=f"{len(df_45)}", inline=False)
