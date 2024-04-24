@@ -15,7 +15,6 @@ django.setup()
 ####
 from rich import inspect
 from appdata.models.intras import IntraProfile, HistIntraProfileData
-from app
 from django.db import connection, reset_queries
 from dateutil.parser import parser
 import pandas as pd
