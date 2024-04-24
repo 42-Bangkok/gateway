@@ -39,5 +39,6 @@ app.autodiscover_tasks(
         "apptasks.tasks.update_intra_profile",
         "apptasks.tasks.discord",
         "apptasks.tasks.snappy",
+        "apptasks.tasks.bh_chaser",
     ]
 )
