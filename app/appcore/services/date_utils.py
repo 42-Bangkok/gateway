@@ -3,7 +3,7 @@ Inserts cadet data
 """
 
 from calendar import month_name
-from datetime import date
+from datetime import date, datetime, timedelta
 
 
 def prev_n_months(n: int) -> list[str]:
@@ -59,3 +59,54 @@ def month_range_from_now(n: int) -> list[str]:
     return (
         prev_n_months(n) + [month_name[(date.today().month)].lower()] + next_n_months(n)
     )
+
+
+def inc_month(dt, n) -> datetime:
+    """
+    Increment month by n, it will go to the first day of the month
+    Args:
+        dt: datetime
+        n: +ve int
+    Returns:
+        datetime
+    """
+    for _ in range(n):
+        month = dt.month
+        while dt.month == month:
+            dt += timedelta(days=1)
+
+    return dt
+
+
+def dec_month(dt, n) -> datetime:
+    """
+    Decrement month by n, it will go to the last day of the month
+    Args:
+        dt: datetime
+        n: +ve int
+    """
+    for _ in range(n):
+        month = dt.month
+        while dt.month == month:
+            dt -= timedelta(days=1)
+
+    return dt
+
+
+def dt_range_from_dt(dt, n) -> list[datetime]:
+    """
+    Get a list of datetime objects from the given datetime object
+    Args:
+        dt: datetime
+        n: int
+    Returns:
+        list[datetime]
+    """
+    ret = [dt]
+    for i in range(n):
+        ret.append(inc_month(dt, i + 1))
+    for i in range(n):
+        ret.append(dec_month(dt, i + 1))
+    ret.sort()
+
+    return ret
