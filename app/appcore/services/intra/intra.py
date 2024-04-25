@@ -230,7 +230,7 @@ class Intra:
         params = urlencode(filter)
 
         def _get_users_at_page(pagenum):
-            url = f"{self.BASE}/{ENDPOINT}/{cursus_id}/users/?{params}&page[number]={pagenum}&page[size]=100"
+            url = f"{self.BASE}/{ENDPOINT}/{cursus_id}/users/?{params}&page[number]={pagenum}&page[size]=50"
             console.log(f"Getting {url}")
             headers = {"Authorization": f"Bearer {self.access_token}"}
             r = httpx.get(url, headers=headers, timeout=self.timeout)
