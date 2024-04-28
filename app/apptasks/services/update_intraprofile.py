@@ -44,9 +44,10 @@ def update_intraprofile() -> bool:
     hist_intra_profile_data_s = []
     for user_info in user_infos:
         intra_profile, _ = IntraProfile.objects.get_or_create(
-            login=user_info["login"],
             intra_id=user_info["id"],
         )
+        if intra_profile.login != user_info["login"]:
+            intra_profile.login = user_info["login"]
         intra_profile.pool_month = user_info["pool_month"]
         intra_profile.pool_year = user_info["pool_year"]
         intra_profile.cursus_ids = [
