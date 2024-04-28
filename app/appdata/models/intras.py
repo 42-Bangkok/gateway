@@ -15,7 +15,13 @@ class IntraProfile(BaseAutoDate, BaseUUID):
     cursus_ids: the cursus IDs the user is in
     """
 
-    login = models.CharField(max_length=255, unique=True)
+    login = models.CharField(
+        max_length=255,
+        unique=True,
+        null=True,
+        blank=True,
+        default=None,
+    )
     intra_id = models.IntegerField(unique=True)
     isBookmarked = models.BooleanField(default=False)
     pool_month = models.CharField(max_length=100, null=True, blank=True)
