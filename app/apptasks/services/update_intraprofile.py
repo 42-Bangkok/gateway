@@ -18,7 +18,14 @@ def update_intraprofile() -> bool:
     cursus id 3 Discovery
     cursus id 69 Python
     """
-    CURSUS_IDS = [9, 3, 21, 74, 75, 69]
+    CURSUS_IDS = [
+        9,
+        # 3, disabled due to possbly be the cause of 500s
+        21,
+        74,
+        75,
+        69,
+    ]
     FILTER = {
         "filter[primary_campus_id]": 33,
     }
