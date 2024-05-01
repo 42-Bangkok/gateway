@@ -4,4 +4,4 @@ from apptasks.routes.tasks import router as snappy_router
 
 
 router = Router()
-router.add_router("/tasks", snappy_router)
+router.add_router("/tasks", snappy_router, auth=ServiceBearerTokenAuth())
