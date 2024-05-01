@@ -18,7 +18,7 @@ router = Router(tags=["tasks"])
     "/",
     response={200: TasksGetOut},
 )
-def get_tasks(request, name_contains: str = None):
+def get_tasks(request, startswith: str = None):
     """
     Get all tasks
     Query Parameters:
@@ -26,8 +26,8 @@ def get_tasks(request, name_contains: str = None):
     """
 
     tasks = PeriodicTask.objects.filter()
-    if name_contains:
-        tasks = tasks.filter(name__icontains=name_contains)
+    if startswith:
+        tasks = tasks.filter(name__istartswith=startswith)
 
     return {"items": tasks}
 

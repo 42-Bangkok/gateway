@@ -1,13 +1,13 @@
 import json
 from ninja import Field, ModelSchema, Schema
 from django_celery_beat.models import PeriodicTask, CrontabSchedule
-from pydantic import validator
+from pydantic import field_validator
 
 
 class PeriodicTaskSchema(ModelSchema):
     class Meta:
         model = PeriodicTask
-        fields = ["id", "name"]
+        fields = ["id", "name", "enabled"]
 
 
 class TasksGetOut(Schema):
@@ -57,13 +57,13 @@ class CreateSnappyTaskPostIn(Schema):
     cron_schedule: CronScheduleSchema
     kwargs: CreateSnappyKwargs
 
-    @validator("name")
+    @field_validator("name")
     def name_must_be_unique(cls, v):
         if PeriodicTask.objects.filter(name=v).exists():
             raise ValueError("name must be unique")
         return v
 
-    @validator("name")
+    @field_validator("name")
     def name_must_begin_with_snappy(cls, v):
         if not v.startswith("snappy."):
             raise ValueError("name must begin with snappy.")
@@ -76,13 +76,13 @@ class SnappyTaskPatchIn(Schema):
     cron_schedule: CronScheduleSchema
     kwargs: CreateSnappyKwargs = None
 
-    @validator("name")
+    @field_validator("name")
     def name_must_be_unique(cls, v):
         if PeriodicTask.objects.filter(name=v).exists():
             raise ValueError("name must be unique")
         return v
 
-    @validator("name")
+    @field_validator("name")
     def name_must_begin_with_snappy(cls, v):
         if not v.startswith("snappy."):
             raise ValueError("name must begin with snappy.")
