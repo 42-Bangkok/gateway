@@ -21,10 +21,12 @@ from ninja import NinjaAPI
 
 from appaccount.api import router as account_router
 from appdata.api import router as data_router
+from apptasks.api import router as tasks_router
 
 api = NinjaAPI()
 api.add_router("/account", account_router)
 api.add_router("/data", data_router)
+api.add_router("/apptasks", tasks_router)
 
 urlpatterns = [
     path("api/", api.urls),
