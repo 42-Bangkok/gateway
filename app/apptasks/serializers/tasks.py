@@ -10,7 +10,7 @@ class PeriodicTaskSchema(ModelSchema):
 
     class Meta:
         model = PeriodicTask
-        fields = ["id", "name", "enabled"]
+        fields = ["id", "name", "description", "enabled"]
 
 
 class TasksGetOut(Schema):
@@ -68,15 +68,15 @@ class CreateSnappyTaskPostIn(Schema):
 
     @field_validator("name")
     def name_must_begin_with_snappy(cls, v):
-        if not v.startswith("snappy."):
+        if not v.startswith("snappy:"):
             raise ValueError("name must begin with snappy.")
         return v
 
 
 class SnappyTaskPatchIn(Schema):
-    name: str = Field(None, examples=["snappy.snap-discovery"])
+    name: str = Field(None, examples=["snappy:snap-discovery"])
     enabled: bool = None
-    cron_schedule: CronScheduleSchema
+    cron_schedule: CronScheduleSchema | None = None
     kwargs: CreateSnappyKwargs = None
 
     @field_validator("name")
@@ -87,6 +87,6 @@ class SnappyTaskPatchIn(Schema):
 
     @field_validator("name")
     def name_must_begin_with_snappy(cls, v):
-        if not v.startswith("snappy."):
-            raise ValueError("name must begin with snappy.")
+        if not v.startswith("snappy:"):
+            raise ValueError("name must begin with snappy:")
         return v

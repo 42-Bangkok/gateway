@@ -68,8 +68,6 @@ def patch_snappy_task(request, id: int, payload: SnappyTaskPatchIn):
     task = PeriodicTask.objects.filter(id=id).first()
     if task is None:
         return 404, None
-    if not task.name.startswith("snappy."):
-        return 400, {"code": "not_snappy_task", "detail": "Not a snappy task."}
     for key, value in payload.model_dump(exclude_unset=True).items():
         match key:
             case "kwargs":
