@@ -5,6 +5,9 @@ from pydantic import field_validator
 
 
 class PeriodicTaskSchema(ModelSchema):
+    enabled: bool
+    id: int
+
     class Meta:
         model = PeriodicTask
         fields = ["id", "name", "enabled"]
