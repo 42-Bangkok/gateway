@@ -13,6 +13,7 @@ def update_intraprofile() -> bool:
     """
     try:
         _update_intraprofile()
+        send_simple_message(f"update_intraprofle(); Bonjour", "dev")
     except Exception as e:
         send_simple_message(f"update_intraprofile(); Error: {e}", "dev")
         return False
