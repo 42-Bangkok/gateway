@@ -20,7 +20,7 @@ def update_intraprofile() -> bool:
     """
     CURSUS_IDS = [
         9,
-        # 3, disabled due to possbly be the cause of 500s
+        3, # disabled due to possbly be the cause of 500s
         21,
         74,
         75,
