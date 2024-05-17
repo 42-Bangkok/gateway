@@ -44,3 +44,6 @@ release:
 	echo $$ver &&\
 	git tag -a $$ver -m "Release $$ver" &&\
 	git push origin $$ver
+update-intraprofile:
+	cd app &&\
+	poetry run python manage.py update_intraprofile
