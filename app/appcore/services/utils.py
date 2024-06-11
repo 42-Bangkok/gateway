@@ -1,6 +1,5 @@
 from base64 import urlsafe_b64decode, urlsafe_b64encode
 from uuid import UUID
-from uuid import uuid4
 
 
 def uuid2slug(uuidstring: str | UUID) -> str:
