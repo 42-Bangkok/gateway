@@ -189,7 +189,7 @@ class IntraUser(Intra):
         Returns:
             :return: The number of points taken from the user and donated to the pool.
         """
-        REASON = "Evaluation point socialism."
+        REASON = "Provided points to the pool."
 
         if self.correction_point <= target:
             return 0
