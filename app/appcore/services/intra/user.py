@@ -311,6 +311,15 @@ class IntraUser(Intra):
         """
         l_eval_hists = self.get_correction_point_hist()
         df_eval_hist = pd.DataFrame(l_eval_hists)
+
+        # catch user with no eval history
+        try:
+            df_eval_hist["reason"]
+        except KeyError:
+            self.pts_gain = 0
+            self.pts_lost = 0
+            return self.pts_gain, self.pts_lost
+
         self.pts_lost = abs(
             df_eval_hist[df_eval_hist["reason"] == "Defense plannification"][
                 "sum"
