@@ -41,7 +41,7 @@ class Intra:
         data = {"grant_type": "client_credentials"}
         auth = (ENVS["FORTY_TWO_CLIENT_ID"], ENVS["FORTY_TWO_CLIENT_SECRET"])
         url = f"{self.BASE}/oauth/token"
-        with httpx.Client() as client:
+        with httpx.Client(timeout=self.timeout) as client:
             r = client.post(
                 url,
                 data=data,
@@ -72,7 +72,7 @@ class Intra:
         """
         url = f"{self.BASE}/users/{login}"
         headers = {"Authorization": f"Bearer {self.access_token}"}
-        with httpx.Client() as client:
+        with httpx.Client(timeout=self.timeout) as client:
             r = client.get(url, headers=headers)
             r.raise_for_status()
 
@@ -107,7 +107,7 @@ class Intra:
         )
         url = f"{self.BASE}/users"
         headers = {"Authorization": f"Bearer {self.access_token}"}
-        with httpx.Client() as client:
+        with httpx.Client(timeout=self.timeout) as client:
             r = client.get(url, headers=headers, params=filter_params)
             r.raise_for_status()
             ret += r.json()
@@ -140,7 +140,7 @@ class Intra:
         )
         url = f"{self.BASE}/cursus/{cursus_id}/users/"
         headers = {"Authorization": f"Bearer {self.access_token}"}
-        with httpx.Client() as client:
+        with httpx.Client(timeout=self.timeout) as client:
             r = client.get(
                 url, headers=headers, params=filter_params, timeout=self.timeout
             )
@@ -178,7 +178,7 @@ class Intra:
         """
         headers = {"Authorization": f"Bearer {self.access_token}"}
         url = f"{self.BASE}/pools/{pool_id}"
-        with httpx.Client() as client:
+        with httpx.Client(timeout=self.timeout) as client:
             r = client.get(url, headers=headers)
             r.raise_for_status()
 
@@ -208,7 +208,7 @@ class Intra:
         headers = {"Authorization": f"Bearer {self.access_token}"}
         url = f"{self.BASE}/pools/{pool_id}/points/add"
         data = {"points": value}
-        with httpx.Client() as client:
+        with httpx.Client(timeout=self.timeout) as client:
             r = client.post(url, headers=headers, data=data, timeout=self.timeout)
             r.raise_for_status()
 
@@ -251,7 +251,7 @@ class Intra:
         """
         ENDPOINT = "users"
 
-        with httpx.Client() as client:
+        with httpx.Client(timeout=self.timeout) as client:
             url = f"{self.BASE}/{ENDPOINT}/{id}"
             headers = {"Authorization": f"Bearer {self.access_token}"}
             r = client.get(url, headers=headers, timeout=self.timeout)
@@ -308,7 +308,7 @@ class Intra:
 
         projects = []
         pagenum = 1
-        with httpx.Client() as client:
+        with httpx.Client(timeout=self.timeout) as client:
             while r := _get_projects_at_page(pagenum, client):
                 projects += r
                 pagenum += 1
